@@ -75,6 +75,8 @@ fun DataStoreDemo(modifier: Modifier) {
         Button(onClick = {
             coroutineScope.launch {
                 store.saveUsername("flygirl")
+                store.saveHighscore(100)
+                store.saveDarkmode(true)
             }
 
         }) {
