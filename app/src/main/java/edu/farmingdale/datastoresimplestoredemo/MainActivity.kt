@@ -10,10 +10,14 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -51,6 +55,7 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun readFromInternalFile(): String {
+
         val inputStream = openFileInput("fav_haiku")
         val reader = inputStream.bufferedReader()
         val stringBuilder = StringBuilder()
@@ -66,15 +71,21 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun DataStoreDemo(modifier: Modifier) {
+    var rdname by remember { mutableStateOf( " ") }
+
     val store = AppStorage(LocalContext.current)
     val appPrefs = store.appPreferenceFlow.collectAsState(AppPreferences())
     val coroutineScope = rememberCoroutineScope()
     Column (modifier = Modifier.padding(50.dp)) {
+
         Text("Values = ${appPrefs.value.userName}, " +
                 "${appPrefs.value.highScore}, ${appPrefs.value.darkMode}")
+
+       OutlinedTextField(value = rdname, onValueChange = {rdname=it})
+
         Button(onClick = {
             coroutineScope.launch {
-                store.saveUsername("flygirl")
+                store.saveUsername(rdname)
                 store.saveHighscore(100)
                 store.saveDarkmode(true)
             }
@@ -82,8 +93,10 @@ fun DataStoreDemo(modifier: Modifier) {
         }) {
             Text("Save Values")
         }
+
     }
 }
+
 
 // ToDo 1: Modify the App to store a high score and a dark mode preference
 // ToDo 2: Modify the APP to store the username through a text field
